@@ -1,0 +1,23 @@
+---
+-  hosts: qa 
+   gather_facts: false
+   tasks:
+    - name: fetching the branch name
+      shell: git fetch && git reset --hard origin/"{{ branch_name }}"
+      args:
+        chdir: /var/www/html/qa/{{ dir }}
+
+    - name: check out branch 
+      shell: git checkout "{{ branch_name }}"
+      args:
+        chdir: /var/www/html/qa/{{ dir }}
+
+    - name: fetching the branch 
+      shell: git fetch && git reset --hard origin/"{{ branch_name }}"
+      args:
+        chdir: /var/www/html/qa/{{ dir }}
+
+    - name: Running Gulp  
+      shell: gulp --env qa1
+      args:
+        chdir: /var/www/html/qa/{{ dir }}
