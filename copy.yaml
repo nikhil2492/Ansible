@@ -1,0 +1,14 @@
+---
+-  hosts: productionserver
+   gather_facts: false
+   tasks:
+    - name: removing the old backup of IP file
+      file: 
+       path: /var/www/html/test/somefile.txt
+       state: absent
+
+    - name: taking the backup of current IP config
+      shell: mv /var/www/html/test/somefile.txt /var/www/html/test/somefile-bkp.txt
+     
+    - name: copying the latest IP file to remote server
+      copy: src=/root/.jenkins/workspace/test/somefile.txt dest=/var/www/html/test/
