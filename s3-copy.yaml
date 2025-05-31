@@ -1,0 +1,9 @@
+---
+-  hosts: localhost
+   tasks:
+    - name: uploading the latest mobile apk
+      aws_s3:
+       bucket: sample-bucket
+       object: downloads/a.apk-{{ansible_date_time.date}}
+       src: /root/.jenkins/workspace/apk/a.apk
+       mode: put
