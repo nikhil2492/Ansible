@@ -1,0 +1,13 @@
+---
+-  hosts: productionserver
+   gather_facts: false
+   tasks:
+    - name: "Cronjob Entry"
+      cron:
+       name: "git pull job"
+       minute: "*/2"
+       hour: "*"
+       day: "*"
+       month: "*"
+       weekday: "*"
+       job: sleep 10; sh /root/gitpullnew.sh
