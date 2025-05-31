@@ -1,0 +1,38 @@
+- name: Deploy Laravel Project
+  hosts: WL-WEB 
+  become: true
+  vars_prompt:
+    - name: "new_db"
+      prompt: "Enter the New Database Name"
+    - name: "old_db"
+      prompt: "Enter the old Database Name"     
+  tasks:
+    - name: Change env file
+      command: sed -i "s/{{ old_db }}/{{ new_db }}/g" .env
+      args:
+        chdir: /home/ec2-user/laravel_web_app
+    - name: Change composer.json
+      command: sed -i 's/"^7.3",/"^7.3||^8.0",/g' composer.json
+      args:
+        chdir: /home/ec2-user/laravel_web_app
+
+    - name: Retag Current v1 Image
+      command: docker tag webapp-laravel-webapp:v1 webapp-laravel-webapp:v2
+
+    - name: Remove Version 1 Image
+      command: docker rmi  webapp-laravel-webapp:v1
+
+    - name: Retag Current Latest Images
+      command: docker tag webapp-laravel-webapp:latest webapp-laravel-webapp:v1
+
+    - name: Docker Down
+      command: /usr/local/bin/docker-compose down
+      become_user: ec2-user
+      args:
+        chdir: /home/ec2-user/Docker/webapp-laravel
+
+    - name: Recreate And Start The Docker
+      become_user: ec2-user
+      command: /usr/local/bin/docker-compose up -d --build --force-recreate
+      args:
+        chdir: /home/ec2-user/webapp-laravel
